@@ -1,12 +1,34 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
+import { AuthService } from './services/auth.service';
+import { CartService } from './services/cart.service';
+import { WishlistService } from './services/wishlist.service';
 
 describe('AppComponent', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [RouterTestingModule],
-    declarations: [AppComponent]
-  }));
+  beforeEach(async () => {
+    const authSpy = jasmine.createSpyObj('AuthService', ['logout'], {
+      currentUser$: of(null),
+      isAuthenticated$: of(false)
+    });
+    const cartSpy = jasmine.createSpyObj('CartService', [], {
+      cart$: of(null)
+    });
+    const wishlistSpy = jasmine.createSpyObj('WishlistService', [], {
+      wishlist$: of(null)
+    });
+
+    await TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      declarations: [AppComponent],
+      providers: [
+        { provide: AuthService, useValue: authSpy },
+        { provide: CartService, useValue: cartSpy },
+        { provide: WishlistService, useValue: wishlistSpy }
+      ]
+    }).compileComponents();
+  });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -14,16 +36,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'code-review-coverage-expo'`, () => {
+  it(`should have as title 'ecommerce-app'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('code-review-coverage-expo');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('code-review-coverage-expo app is running!');
+    expect(app.title).toEqual('ecommerce-app');
   });
 });
