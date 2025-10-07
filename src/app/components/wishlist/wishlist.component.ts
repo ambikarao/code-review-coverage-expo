@@ -24,10 +24,8 @@ export class WishlistComponent implements OnInit {
     this.wishlistService.removeFromWishlist(productId);
   }
 
-  addToCart(wishlistItem: any): void {
+  addToCart(wishlistItem: Wishlist): void {
     this.cartService.addToCart(wishlistItem.product);
-    // Optionally remove from wishlist after adding to cart
-    // this.wishlistService.removeFromWishlist(wishlistItem.product.id);
   }
 
   clearWishlist(): void {
