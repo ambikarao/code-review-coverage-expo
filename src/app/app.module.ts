@@ -23,6 +23,11 @@ import { AuthService } from './services/auth.service';
 import { ProductService } from './services/product.service';
 import { CartService } from './services/cart.service';
 import { WishlistService } from './services/wishlist.service';
+import { AboutComponent } from './components/about/about.component';
+import { ContactComponent } from './components/contact/contact.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { OrdersComponent } from './components/orders/orders.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +39,12 @@ import { WishlistService } from './services/wishlist.service';
     WishlistComponent,
     Review1Component,
     Review2Component,
-    Review3Component
+    Review3Component,
+    AboutComponent,
+    ContactComponent,
+    ProfileComponent,
+    SettingsComponent,
+    OrdersComponent
   ],
   imports: [
     BrowserModule,
