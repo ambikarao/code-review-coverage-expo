@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-signup',
   templateUrl: './signup.component.html'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
   signupForm: FormGroup;
   isLoading = false;
   errorMessage = '';
@@ -24,6 +24,18 @@ export class SignupComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  // Intentionally subscribe to valueChanges without unsubscribe to simulate leak
+  ngOnInit(): void {
+    this.signupForm.valueChanges.subscribe(() => {
+      // noop; side-effect to keep CD busy
+      this.isLoading = Math.random() > 2; // always false but marks dirty
+    });
+  }
+
+  ngOnDestroy(): void {
+    // intentionally not unsubscribing
   }
 
   private passwordMatchValidator(form: FormGroup) {

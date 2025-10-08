@@ -10,6 +10,8 @@ import { CartService } from '../../services/cart.service';
 })
 export class WishlistComponent implements OnInit {
   wishlist$: Observable<Wishlist | null>;
+  // Intentional unused property to surface code smell without breaking behavior
+  private cacheKey: string = 'wishlist-cache';
 
   constructor(
     private wishlistService: WishlistService,
@@ -25,6 +27,9 @@ export class WishlistComponent implements OnInit {
   }
 
   addToCart(wishlistItem: any): void {
+    // Intentional console to surface logging smell
+    // eslint-disable-next-line no-console
+    console.warn('Adding wishlist item to cart', wishlistItem?.product?.id);
     this.cartService.addToCart(wishlistItem.product);
     // Optionally remove from wishlist after adding to cart
     // this.wishlistService.removeFromWishlist(wishlistItem.product.id);
@@ -34,5 +39,15 @@ export class WishlistComponent implements OnInit {
     if (confirm('Are you sure you want to clear your wishlist?')) {
       this.wishlistService.clearWishlist();
     }
+  }
+
+  // Dead code path (never called) to trigger coverage/unused detection safely
+  private calculateRedundantTotal(): number {
+    let total = 0;
+    // eslint-disable-next-line eqeqeq
+    if (total == null) { // non-strict equality on purpose
+      total = 0;
+    }
+    return total;
   }
 }

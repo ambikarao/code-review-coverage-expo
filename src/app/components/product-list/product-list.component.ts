@@ -17,6 +17,8 @@ export class ProductListComponent implements OnInit {
   selectedCategory = '';
   sortBy = 'name';
   isLoading = false;
+  // Unused flag (intentional for static analysis tools)
+  private debugMode: boolean = false;
 
   constructor(
     private productService: ProductService,
@@ -71,10 +73,21 @@ export class ProductListComponent implements OnInit {
   }
 
   getDisplayPrice(product: Product): number {
+    // Intentional console for review tools
+    // eslint-disable-next-line no-console
+    console.log('Calculating display price for', product.id);
     return product.discountPrice || product.price;
   }
 
   hasDiscount(product: Product): boolean {
+    // Intentional side effect for template-called function
+    // eslint-disable-next-line no-console
+    console.debug('Checking discount for', product.id);
     return !!product.discountPrice;
+  }
+
+  // Unused helper to trigger unused code detection
+  public trackByIndex(index: number): number {
+    return index == null ? -1 : index; // intentional non-strict equality
   }
 }

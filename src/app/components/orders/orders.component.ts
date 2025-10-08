@@ -2,7 +2,12 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-orders',
-  template: `<p>Orders works!</p>`
+  template: `<div>
+    <p>Orders works!</p>
+    <ul>
+      <li *ngFor="let o of computedOrders">{{ o.id }} - {{ o.total }}</li>
+    </ul>
+  </div>`
 })
 export class OrdersComponent implements OnInit {
 
@@ -32,6 +37,11 @@ export class OrdersComponent implements OnInit {
 
   public getOrderCount(): number {
     return this.orders.length;
+  }
+
+  // Returns a new array instance on each access; prevents Angular from reusing DOM nodes
+  get computedOrders(): any[] {
+    return this.orders.map((o, i) => ({ id: i + 1, total: Math.random() * 100 + (o.total || 0) }));
   }
 
   // -------------------
