@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
-  template: `<p>Settings works!</p>` // minimal template
+  template: `<div>
+    <p>Settings works!</p>
+    <p>{{ noisyValue }}</p>
+  </div>` // minimal template
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   // -------------------------------
   // Public methods (never called)
@@ -175,6 +179,21 @@ export class SettingsComponent {
   private unused3(): void {}
   private unused4(): void {}
   private unused5(): void {}
+
+  noisyValue = 0;
+  private sub: any;
+
+  // Intentionally create a subscription without proper teardown handling
+  ngOnInit(): void {
+    this.sub = interval(200).subscribe(v => {
+      this.noisyValue = v + Math.random();
+    });
+  }
+
+  // Forget to unsubscribe
+  ngOnDestroy(): void {
+    // intentionally left blank
+  }
   private unused6(): void {}
   private unused7(): void {}
   private unused8(): void {}

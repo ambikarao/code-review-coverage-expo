@@ -11,6 +11,8 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  // Intentional: keep unused variable for static analysis
+  private lastLoginAttemptAt?: Date;
   systemStatus: any = {};
 
   constructor(
@@ -28,6 +30,8 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
+      // eslint-disable-next-line no-console
+      console.info('Submitting login form');
       
       this.authService.login(this.loginForm.value).subscribe({
         next: (user) => {
@@ -37,6 +41,8 @@ export class LoginComponent {
         error: (error) => {
           this.isLoading = false;
           this.errorMessage = error.message || 'Login failed. Please try again.';
+          // eslint-disable-next-line no-unused-expressions
+          this.lastLoginAttemptAt = new Date(); // write-only field
         }
       });
     }

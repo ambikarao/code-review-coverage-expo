@@ -1,8 +1,13 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-profile',
-  template: `<p>Profile works!</p>` // minimal template
+  template: `<div>
+    <p>Profile works!</p>
+    <button (click)="spamChange()">Spam Change</button>
+    <span>{{ randomValue }}</span>
+  </div>`,
+  changeDetection: ChangeDetectionStrategy.Default // trigger heavy CD when state changes
 })
 export class ProfileComponent {
 
@@ -170,6 +175,15 @@ export class ProfileComponent {
   private unused2(): void {}
   private unused3(): void {}
   private unused4(): void {}
+
+  randomValue = 0;
+
+  // Causes multiple change cycles by updating state repeatedly
+  public spamChange(): void {
+    for (let i = 0; i < 1000; i++) {
+      this.randomValue = Math.random();
+    }
+  }
   private unused5(): void {}
   private unused6(): void {}
   private unused7(): void {}
