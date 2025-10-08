@@ -6,12 +6,12 @@ on:
       branch:
         description: 'Branch to run coverage on'
         required: false
-        default: 'main'
+        default: 'feature/code-review-base'
         type: string
   push:
-    branches: [ main, develop, feature/* ]
+    branches: [ feature/code-review-base, develop, feature/* ]
   pull_request:
-    branches: [ main, feature/* ]
+    branches: [ feature/code-review-base, feature/* ]
 
 jobs:
   coverage:
