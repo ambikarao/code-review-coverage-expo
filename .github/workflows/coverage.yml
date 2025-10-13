@@ -6,12 +6,12 @@ on:
       branch:
         description: 'Branch to run coverage on'
         required: false
-        default: 'feature/code-review-base'
+        default: 'check-ng-yml'
         type: string
   push:
-    branches: [ feature/code-review-base, develop, feature/* ]
+    branches: [ check-ng-yml, develop, feature/* ]
   pull_request:
-    branches: [ feature/code-review-base, feature/* ]
+    branches: [ check-ng-yml, feature/* ]
 
 jobs:
   coverage:
