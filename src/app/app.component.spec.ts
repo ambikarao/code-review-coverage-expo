@@ -6,28 +6,29 @@ import { AuthService } from './services/auth.service';
 import { CartService } from './services/cart.service';
 import { WishlistService } from './services/wishlist.service';
 
+jest.mock('./app.component.html', () => ''); // Mocking the HTML template
+
 describe('AppComponent', () => {
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['logout'], {
-      currentUser$: of(null),
-      isAuthenticated$: of(false)
-    });
-    const cartSpy = jasmine.createSpyObj('CartService', [], {
-      cart$: of(null)
-    });
-    const wishlistSpy = jasmine.createSpyObj('WishlistService', [], {
-      wishlist$: of(null)
-    });
-
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       declarations: [AppComponent],
       providers: [
-        { provide: AuthService, useValue: authSpy },
-        { provide: CartService, useValue: cartSpy },
-        { provide: WishlistService, useValue: wishlistSpy }
+        { provide: AuthService, useClass: class MockAuthService {
+          logout = jest.fn();
+          currentUser$ = of(null);
+          isAuthenticated$ = of(false);
+        } },
+        { provide: CartService, useClass: class MockCartService {
+          cart$ = of(null);
+        } },
+        { provide: WishlistService, useClass: class MockWishlistService {
+          wishlist$ = of(null);
+        } }
       ]
-    }).compileComponents();
+    })
+      .overrideComponent(AppComponent, { set: { template: '', styles: [''] } }) // Override template and styles
+      .compileComponents();
   });
 
   it('should create the app', () => {

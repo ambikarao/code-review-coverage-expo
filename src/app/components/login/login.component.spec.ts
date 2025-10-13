@@ -1,33 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
+
+jest.mock('./login.component.html', () => '');
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
-  let router: jasmine.SpyObj<Router>;
+  let authService: any;
+  let router: any;
 
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['login']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
       imports: [ReactiveFormsModule],
       providers: [
-        { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: AuthService, useClass: class MockAuthService {
+          login = jest.fn();
+        } },
+        { provide: Router, useClass: class MockRouter {
+          navigate = jest.fn();
+        } },
+        FormBuilder
       ]
-    }).compileComponents();
+    })
+      .overrideComponent(LoginComponent, { set: { template: '' } })
+      .compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    authService = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -37,11 +43,11 @@ describe('LoginComponent', () => {
 
   it('should navigate to products on successful login', () => {
     const mockUser = { id: '1', email: 'test@example.com', firstName: 'Test', lastName: 'User', createdAt: new Date(), isActive: true };
-    authService.login.and.returnValue(of(mockUser));
-    
+    authService.login.mockReturnValue(of(mockUser));
+
     component.loginForm.patchValue({ email: 'test@example.com', password: 'password123' });
     component.onSubmit();
-    
+
     expect(router.navigate).toHaveBeenCalledWith(['/products']);
   });
 });

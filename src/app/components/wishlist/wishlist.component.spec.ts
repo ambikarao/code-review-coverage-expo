@@ -4,32 +4,40 @@ import { of } from 'rxjs';
 import { WishlistComponent } from './wishlist.component';
 import { WishlistService } from '../../services/wishlist.service';
 import { CartService } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
 
 describe('WishlistComponent', () => {
   let component: WishlistComponent;
   let fixture: ComponentFixture<WishlistComponent>;
-  let wishlistService: jasmine.SpyObj<WishlistService>;
-  let cartService: jasmine.SpyObj<CartService>;
+  let wishlistService: jest.Mocked<WishlistService>;
+  let cartService: jest.Mocked<CartService>;
 
   beforeEach(async () => {
-    const wishlistSpy = jasmine.createSpyObj('WishlistService', ['removeFromWishlist', 'clearWishlist'], {
-      wishlist$: of(null)
-    });
-    const cartSpy = jasmine.createSpyObj('CartService', ['addToCart']);
-
     await TestBed.configureTestingModule({
       declarations: [WishlistComponent],
       imports: [RouterTestingModule],
       providers: [
-        { provide: WishlistService, useValue: wishlistSpy },
-        { provide: CartService, useValue: cartSpy }
+        { provide: WishlistService, useClass: class MockWishlistService {
+          wishlist$ = of({ items: [], totalItems: 0, id: '', userId: '', lastUpdated: new Date() });
+          removeFromWishlist = jest.fn();
+          clearWishlist = jest.fn();
+          addToWishlist = jest.fn();
+          isInWishlist = jest.fn();
+          getWishlistItemCount = jest.fn().mockReturnValue(0);
+        } },
+        { provide: CartService, useClass: class MockCartService {
+          addToCart = jest.fn();
+        } },
+        { provide: AuthService, useClass: class MockAuthService {
+          getCurrentUser = jest.fn().mockReturnValue({ id: '1' });
+        } }
       ]
-    }).compileComponents();
+    })
+      .overrideComponent(WishlistComponent, { set: { template: '' } })
+      .compileComponents();
 
     fixture = TestBed.createComponent(WishlistComponent);
     component = fixture.componentInstance;
-    wishlistService = TestBed.inject(WishlistService) as jasmine.SpyObj<WishlistService>;
-    cartService = TestBed.inject(CartService) as jasmine.SpyObj<CartService>;
     fixture.detectChanges();
   });
 

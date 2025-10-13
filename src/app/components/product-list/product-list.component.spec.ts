@@ -5,38 +5,51 @@ import { ProductListComponent } from './product-list.component';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
+import { AuthService } from '../../services/auth.service';
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
   let fixture: ComponentFixture<ProductListComponent>;
-  let productService: jasmine.SpyObj<ProductService>;
-  let cartService: jasmine.SpyObj<CartService>;
+  let productService: jest.Mocked<ProductService>;
+  let cartService: jest.Mocked<CartService>;
 
   beforeEach(async () => {
-    const productSpy = jasmine.createSpyObj('ProductService', ['getProducts', 'getCategories'], {
-      products$: of([])
-    });
-    const cartSpy = jasmine.createSpyObj('CartService', ['addToCart']);
-    const wishlistSpy = jasmine.createSpyObj('WishlistService', ['isInWishlist', 'addToWishlist']);
-
     await TestBed.configureTestingModule({
       declarations: [ProductListComponent],
       imports: [FormsModule],
       providers: [
-        { provide: ProductService, useValue: productSpy },
-        { provide: CartService, useValue: cartSpy },
-        { provide: WishlistService, useValue: wishlistSpy }
+        { provide: ProductService, useClass: class MockProductService {
+          getProducts = jest.fn().mockReturnValue(of([]));
+          getCategories = jest.fn().mockReturnValue(of([]));
+          products$ = of([]);
+          getProductById = jest.fn().mockReturnValue(of(undefined));
+        } },
+        { provide: CartService, useClass: class MockCartService {
+          addToCart = jest.fn();
+          cart$ = of({ items: [], totalItems: 0, totalAmount: 0, id: '', userId: '', lastUpdated: new Date() });
+          updateQuantity = jest.fn();
+          removeFromCart = jest.fn();
+          clearCart = jest.fn();
+          getCartItemCount = jest.fn().mockReturnValue(0);
+        } },
+        { provide: WishlistService, useClass: class MockWishlistService {
+          isInWishlist = jest.fn();
+          addToWishlist = jest.fn();
+          removeFromWishlist = jest.fn();
+          clearWishlist = jest.fn();
+          wishlist$ = of({ items: [], totalItems: 0, id: '', userId: '', lastUpdated: new Date() });
+          getWishlistItemCount = jest.fn().mockReturnValue(0);
+        } },
+        { provide: AuthService, useClass: class MockAuthService {
+          getCurrentUser = jest.fn().mockReturnValue({ id: '1' });
+        } }
       ]
-    }).compileComponents();
+    })
+      .overrideComponent(ProductListComponent, { set: { template: '' } })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;
-    productService = TestBed.inject(ProductService) as jasmine.SpyObj<ProductService>;
-    cartService = TestBed.inject(CartService) as jasmine.SpyObj<CartService>;
-    
-    productService.getProducts.and.returnValue(of([]));
-    productService.getCategories.and.returnValue(of([]));
-    
     fixture.detectChanges();
   });
 

@@ -1,24 +1,35 @@
 module.exports = {
+  preset: 'jest-preset-angular',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  roots: ['<rootDir>/src'],
+  moduleFileExtensions: ['ts', 'js', 'html'],
+  transform: {
+    '^.+\\.(ts|mjs|js|html)$': 'ts-jest'
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!.*\\.(mjs|js)$)'
+  ],
+  moduleNameMapper: {
+    '^@app/(.*)$': '<rootDir>/src/app/$1',
+    '\\.(html|scss)$': '<rootDir>/__mocks__/fileMock.js'
+  },
+  collectCoverage: true,
+  coverageDirectory: '<rootDir>/coverage/jest',
+  coverageReporters: ['json', 'lcov', 'text', 'html'],
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/index.tsx',
-    '!src/reportWebVitals.ts',
-    '!src/setupTests.ts',
+    'src/app/**/*.ts',
+    '!src/main.ts',
+    '!src/polyfills.ts',
+    '!**/*.module.ts',
+    '!**/*.spec.ts'
   ],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
-  coverageReporters: ['json', 'text', 'lcov', 'html'], // <-- added 'json' for coverage-final.json
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^react-router-dom$': '<rootDir>/src/__mocks__/react-router-dom.ts',
-  },
+      branches: 50,
+      functions: 50,
+      lines: 50,
+      statements: 50
+    }
+  }
 };

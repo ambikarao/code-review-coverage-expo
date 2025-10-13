@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Review2Component } from './review-2.component';
 
+jest.mock('./review-2.component.html', () => '');
+
 describe('Review2Component', () => {
   let component: Review2Component;
   let fixture: ComponentFixture<Review2Component>;
@@ -8,7 +10,9 @@ describe('Review2Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [Review2Component]
-    }).compileComponents();
+    })
+      .overrideComponent(Review2Component, { set: { template: '' } })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Review2Component);
     component = fixture.componentInstance;
